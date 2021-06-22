@@ -1,6 +1,7 @@
 from curses_tools import draw_frame, read_controls, get_frame_size
 from physics import update_speed
 from obstacles import Obstacle, show_obstacles
+from explosion import explode
 import time
 import curses
 import asyncio
@@ -173,6 +174,7 @@ async def fly_garbage(canvas, column, garbage_frame, speed=0.5):
             if garbage_frame_obstacle is obstacle:
                 OBSTACLES.remove(garbage_frame_obstacle)
                 OBSTACLES_IN_LAST_COLLISIONS.remove(obstacle)
+                await explode(canvas, row, column)
                 return
 
         draw_frame(canvas, row, column, garbage_frame)
@@ -180,6 +182,8 @@ async def fly_garbage(canvas, column, garbage_frame, speed=0.5):
         draw_frame(canvas, row, column, garbage_frame, negative=True)
         row += speed
         garbage_frame_obstacle.row = row
+
+    OBSTACLES.remove(garbage_frame_obstacle)
 
 
 async def fill_orbit_with_garbage(canvas):
