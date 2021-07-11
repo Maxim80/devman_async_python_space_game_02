@@ -9,15 +9,37 @@ import random
 import os
 
 
-
 COROUTINES = []
 OBSTACLES = []
 OBSTACLES_IN_LAST_COLLISIONS = []
+PHRASES = {
+    # Только на английском, Repl.it ломается на кириллице
+    1957: "First Sputnik",
+    1961: "Gagarin flew!",
+    1969: "Armstrong got on the moon!",
+    1971: "First orbital space station Salute-1",
+    1981: "Flight of the Shuttle Columbia",
+    1998: 'ISS start building',
+    2011: 'Messenger launch to Mercury',
+    2020: "Take the plasma gun! Shoot the garbage!",
+}
 
 
-async def sleep(tics=1):
-    for _ in range(tics):
-        await asyncio.sleep(0)
+def get_garbage_delay_tics(year):
+    if year < 1961:
+        return None
+    elif year < 1969:
+        return 20
+    elif year < 1981:
+        return 14
+    elif year < 1995:
+        return 10
+    elif year < 2010:
+        return 8
+    elif year < 2020:
+        return 6
+    else:
+        return 2
 
 
 def get_new_coordinate(current_coordinate, max_coordinate, speed, frame_size):
@@ -71,6 +93,11 @@ def get_garbage_frames(garbage_frames_dir):
         garbage_frames.append(garbage_frame)
 
     return garbage_frames
+
+
+async def sleep(tics=1):
+    for _ in range(tics):
+        await asyncio.sleep(0)
 
 
 async def blink(canvas, row, column, symbol='*'):
@@ -128,6 +155,18 @@ async def fire(canvas, start_row, start_column, rows_speed=-1, columns_speed=0):
         column += columns_speed
 
 
+async def show_gameover(canvas):
+    max_row, max_column = canvas.getmaxyx()
+    with open('game_over_frame/game_over_frame.txt', 'r') as file:
+        game_over_frame = file.read()
+
+    row_size, column_size = get_frame_size(game_over_frame)
+    start_row, start_column = ((max_row - row_size) // 2), ((max_column - column_size) // 2)
+    while True:
+        draw_frame(canvas, start_row, start_column, game_over_frame)
+        await asyncio.sleep(0)
+
+
 async def animate_takt(canvas, start_row, start_column, space_pressed, frame):
     if space_pressed:
         fire_coroutine = fire(canvas, start_row, start_column+2)
@@ -143,6 +182,12 @@ async def animate_spaceship(canvas, start_row, start_column, frame_1, frame_2):
     max_row, max_column = canvas.getmaxyx()
     row_speed = column_speed = 0
     while True:
+        for obstacle in OBSTACLES:
+            if obstacle.has_collision(start_row, start_column):
+                game_over_coroutine = show_gameover(canvas)
+                COROUTINES.append(game_over_coroutine)
+                return
+
         rows_direction, columns_direction, space_pressed = read_controls(canvas)
         row_speed, column_speed = update_speed(row_speed, column_speed, rows_direction, columns_direction)
         start_row = get_new_coordinate(start_row, max_row, row_speed, row_size)
@@ -174,7 +219,9 @@ async def fly_garbage(canvas, column, garbage_frame, speed=0.5):
             if garbage_frame_obstacle is obstacle:
                 OBSTACLES.remove(garbage_frame_obstacle)
                 OBSTACLES_IN_LAST_COLLISIONS.remove(obstacle)
-                await explode(canvas, row, column)
+                center_row = row + (frame_row_size // 2)
+                center_column = column + (frame_column_size // 2)
+                await explode(canvas, center_row, center_column)
                 return
 
         draw_frame(canvas, row, column, garbage_frame)
