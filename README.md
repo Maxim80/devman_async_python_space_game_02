@@ -3,11 +3,11 @@
 Данный проект представляет собой игровой движек терминальной игры про космос с анимацией и подключенным управлением.
 
 Управление ракетой:
-двигаться вверх - стрелка вверх на клавиатуре;
-двигаться вниз - стрелка вниз на клавиатуре;
-двигаться влево - стрелка влево;
-двигаться вправо - стрелка вправо.
-стрелять - пробел
+* двигаться вверх - стрелка вверх на клавиатуре;
+* двигаться вниз - стрелка вниз на клавиатуре;
+* двигаться влево - стрелка влево;
+* двигаться вправо - стрелка вправо;
+* стрелять - пробел.
 
 Сценарий игры:
 Темп игры и все события привязаны к годам. Один год — это 1.5 секунды игрового времени. Начинаем с 1957 года — года запуска первого искусственного спутника Земли.
@@ -33,11 +33,11 @@ python main.py
 This project is a game engine for a terminal game about space with animation and connected controls.
 
 Missile control:
-move up - up arrow on the keyboard;
-move down - down arrow on the keyboard;
-move left - left arrow;
-move to the right - arrow to the right.
-shoot - space
+* move up - up arrow on the keyboard;
+* move down - down arrow on the keyboard;
+* move left - left arrow;
+* move to the right - arrow to the right;
+* shoot - space.
 
 Game scenario:
 The pace of the game and all events are tied to the years. One year is 1.5 seconds of playing time. We start from 1957 - the year of the launch of the first artificial Earth satellite.
