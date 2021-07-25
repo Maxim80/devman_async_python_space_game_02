@@ -165,10 +165,10 @@ async def show_gameover(canvas, max_row, max_column):
 async def show_phrase(canvas):
     while True:
         phrase = f'{YEAR}. {PHRASES.get(YEAR, "")}'
-        await animate_takt(canvas, 1, 1, phrase)
+        await animate_step(canvas, 1, 1, phrase)
 
 
-async def animate_takt(canvas, row, column, frame):
+async def animate_step(canvas, row, column, frame):
     draw_frame(canvas, row, column, frame)
     await sleep()
     draw_frame(canvas, row, column, frame, True)
@@ -193,7 +193,7 @@ async def animate_spaceship(canvas, max_row, max_column):
         row_speed, column_speed = update_speed(row_speed, column_speed, rows_direction, columns_direction)
         start_row = get_new_coordinate(start_row, max_row, row_speed, row_size)
         start_column = get_new_coordinate(start_column, max_column, column_speed, column_size)
-        await animate_takt(canvas, start_row, start_column, frame_1)
+        await animate_step(canvas, start_row, start_column, frame_1)
 
         rows_direction, columns_direction, space_pressed = read_controls(canvas)
         if YEAR >= 2020 and space_pressed:
@@ -202,7 +202,7 @@ async def animate_spaceship(canvas, max_row, max_column):
         row_speed, column_speed = update_speed(row_speed, column_speed, rows_direction, columns_direction)
         start_row = get_new_coordinate(start_row, max_row, row_speed, row_size)
         start_column = get_new_coordinate(start_column, max_column, column_speed, column_size)
-        await animate_takt(canvas, start_row, start_column, frame_2)
+        await animate_step(canvas, start_row, start_column, frame_2)
 
 
 async def fly_garbage(canvas, column, garbage_frame, speed=0.5):
@@ -228,7 +228,7 @@ async def fly_garbage(canvas, column, garbage_frame, speed=0.5):
                 await explode(canvas, center_row, center_column)
                 return
 
-        await animate_takt(canvas, row, column, garbage_frame)
+        await animate_step(canvas, row, column, garbage_frame)
         row += speed
         garbage_frame_obstacle.row = row
 
